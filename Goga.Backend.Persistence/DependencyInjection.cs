@@ -6,6 +6,7 @@ using Goga.Backend.Application.Interfaces;
 using Goga.Backend.Persistence.Users;
 using Goga.Backend.Persistence.Courses;
 using Goga.Backend.Persistence.Timetables;
+using Goga.Backend.Persistence.News;
 
 namespace Goga.Backend.Persistence;
 
@@ -37,6 +38,7 @@ public static class DependencyInjection
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<ICourseRepository, CourseRepository>();
         services.AddScoped<ITimetableRepository, TimetableRepository>();
+        services.AddScoped<INewsRepository, NewsRepository>();
 
         return services;
     }

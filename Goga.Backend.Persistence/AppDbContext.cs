@@ -1,6 +1,7 @@
 using Goga.Backend.Domain.Users;
 using Goga.Backend.Domain.Courses;
 using Goga.Backend.Domain.Timetables;
+using Goga.Backend.Domain.News;
 using Microsoft.EntityFrameworkCore;
 
 namespace Goga.Backend.Persistence;
@@ -12,6 +13,7 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
     public DbSet<Section> Sections => Set<Section>();
     public DbSet<UserCourse> UserCourses => Set<UserCourse>();
     public DbSet<ScheduleEntry> ScheduleEntries => Set<ScheduleEntry>();
+    public DbSet<Goga.Backend.Domain.News.News> News => Set<Goga.Backend.Domain.News.News>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -95,6 +97,19 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
             entryNumber++;
         }
         modelBuilder.Entity<ScheduleEntry>().HasData(scheduleEntries);
+
+        modelBuilder.Entity<Goga.Backend.Domain.News.News>(entity =>
+        {
+            entity.ToTable("news");
+            entity.HasKey(item => item.Id);
+            entity.Property(item => item.Title).HasMaxLength(200).IsRequired();
+            entity.Property(item => item.Description).HasMaxLength(2000).IsRequired();
+        });
+
+        modelBuilder.Entity<Goga.Backend.Domain.News.News>().HasData(
+            new { Id = new Guid("40000000-0000-0000-0000-000000000001"), Title = "Добро пожаловать в Goga", Description = "В приложении доступны курсы, лекции и расписание занятий." },
+            new { Id = new Guid("40000000-0000-0000-0000-000000000002"), Title = "Добавлены новые курсы", Description = "Изучайте информатику, программирование, алгоритмы и backend-разработку." },
+            new { Id = new Guid("40000000-0000-0000-0000-000000000003"), Title = "Проверьте расписание", Description = "Актуальное расписание доступно в разделе «Расписание»." });
 
         var courseId = new Guid("10000000-0000-0000-0000-000000000001");
         var informaticsId = new Guid("10000000-0000-0000-0000-000000000002");
