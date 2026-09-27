@@ -1,3 +1,6 @@
 <Solution>
   <Project Path="Goga.Backend.WebApi/Goga.Backend.WebApi.csproj" />
+  <Project Path="Goga.Backend.Domain/Goga.Backend.Domain.csproj" />
+  <Project Path="Goga.Backend.Application/Goga.Backend.Application.csproj" />
+  <Project Path="Goga.Backend.Persistence/Goga.Backend.Persistence.csproj" />
 </Solution>
