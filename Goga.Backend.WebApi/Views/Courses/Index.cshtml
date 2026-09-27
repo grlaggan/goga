@@ -1,0 +1,31 @@
+@model IReadOnlyList<CourseResult>
+@{ ViewData["Title"] = "Курсы"; }
+<main>
+  <h1>Курсы</h1>
+  <p>Выберите курс и запишитесь на него.</p>
+  @if (TempData["Success"] is not null)
+  {
+    <div class="notice success">@TempData["Success"]</div>
+  }
+  @if (TempData["Error"] is not null)
+  {
+    <div class="notice error">@TempData["Error"]</div>
+  }
+  <section class="grid" style="margin-top:20px">
+    @foreach (var course in Model)
+    {
+      <article class="course">
+        <h2>@course.Name</h2>
+        <ul>
+          @foreach (var section in course.Sections)
+          {
+            <li>@(section.Name) — <a href="@(section.PdfPath)" target="_blank">PDF</a></li>
+          }
+        </ul>
+        <form asp-action="Enroll" asp-route-id="@course.Id" method="post">
+          <button type="submit">Записаться</button>
+        </form>
+      </article>
+    }
+  </section>
+</main>

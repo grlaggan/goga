@@ -1,10 +1,8 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Goga.Backend.WebApi.Controllers;
 
-[Authorize]
-public sealed class TimetableController : Controller
+public sealed class HomeController : Controller
 {
     [HttpGet]
     public IActionResult Index() => View();

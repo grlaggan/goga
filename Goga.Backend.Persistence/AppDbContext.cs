@@ -1,5 +1,6 @@
 using Goga.Backend.Domain.Users;
 using Goga.Backend.Domain.Courses;
+using Goga.Backend.Domain.Timetables;
 using Microsoft.EntityFrameworkCore;
 
 namespace Goga.Backend.Persistence;
@@ -10,6 +11,7 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
     public DbSet<Course> Courses => Set<Course>();
     public DbSet<Section> Sections => Set<Section>();
     public DbSet<UserCourse> UserCourses => Set<UserCourse>();
+    public DbSet<ScheduleEntry> ScheduleEntries => Set<ScheduleEntry>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -55,6 +57,44 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
             entity.HasOne(enrollment => enrollment.Course).WithMany(course => course.Enrollments)
                 .HasForeignKey(enrollment => enrollment.CourseId).OnDelete(DeleteBehavior.Cascade);
         });
+
+        modelBuilder.Entity<ScheduleEntry>(entity =>
+        {
+            entity.ToTable("schedule_entries");
+            entity.HasKey(entry => entry.Id);
+            entity.Property(entry => entry.Group).HasMaxLength(100).IsRequired();
+            entity.Property(entry => entry.DayOfWeek).IsRequired();
+            entity.Property(entry => entry.WeekParity).IsRequired();
+            entity.Property(entry => entry.Subject).HasMaxLength(200).IsRequired();
+            entity.Property(entry => entry.Type).IsRequired();
+            entity.Property(entry => entry.Format).IsRequired();
+            entity.Property(entry => entry.Number).IsRequired();
+            entity.Property(entry => entry.Building).HasMaxLength(100).IsRequired();
+            entity.Property(entry => entry.Auditorium).HasMaxLength(100).IsRequired();
+            entity.Property(entry => entry.Lecturer).HasMaxLength(200).IsRequired();
+            entity.HasIndex(entry => new { entry.Group, entry.DayOfWeek, entry.WeekParity });
+        });
+
+        var scheduleEntries = new List<ScheduleEntry>();
+        var groups = new[] { "ИС-101", "БПИ-101" };
+        var subjects = new[] { "Информатика", "Математический анализ", "Программирование", "Базы данных", "Алгоритмы", "Архитектура ПО", "Проектная работа" };
+        var entryNumber = 1;
+        foreach (var group in groups)
+        foreach (var day in Enum.GetValues<DayOfWeek>())
+        foreach (var parity in Enum.GetValues<WeekParity>())
+        {
+            scheduleEntries.Add(new ScheduleEntry(
+                new Guid($"30000000-0000-0000-0000-{entryNumber:D12}"),
+                group, day, parity, subjects[(int)day],
+                day is DayOfWeek.Tuesday or DayOfWeek.Thursday ? LessonType.Practice : LessonType.Lecture,
+                day is DayOfWeek.Friday ? LessonFormat.Asynchronous : LessonFormat.Synchronous,
+                (int)day % 3 + 1,
+                group == "ИС-101" ? "Корпус 1" : "Корпус 2",
+                $"ауд. {101 + (int)day}",
+                group == "ИС-101" ? "Иванов И.И." : "Петров П.П."));
+            entryNumber++;
+        }
+        modelBuilder.Entity<ScheduleEntry>().HasData(scheduleEntries);
 
         var courseId = new Guid("10000000-0000-0000-0000-000000000001");
         var informaticsId = new Guid("10000000-0000-0000-0000-000000000002");
