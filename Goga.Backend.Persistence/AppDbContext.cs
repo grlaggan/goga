@@ -2,6 +2,7 @@ using Goga.Backend.Domain.Users;
 using Goga.Backend.Domain.Courses;
 using Goga.Backend.Domain.Timetables;
 using Goga.Backend.Domain.News;
+using Goga.Backend.Domain.Sports;
 using Microsoft.EntityFrameworkCore;
 
 namespace Goga.Backend.Persistence;
@@ -14,6 +15,7 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
     public DbSet<UserCourse> UserCourses => Set<UserCourse>();
     public DbSet<ScheduleEntry> ScheduleEntries => Set<ScheduleEntry>();
     public DbSet<Goga.Backend.Domain.News.News> News => Set<Goga.Backend.Domain.News.News>();
+    public DbSet<UserSportEnrollment> UserSportEnrollments => Set<UserSportEnrollment>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -97,6 +99,19 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
             entryNumber++;
         }
         modelBuilder.Entity<ScheduleEntry>().HasData(scheduleEntries);
+
+        modelBuilder.Entity<UserSportEnrollment>(entity =>
+        {
+            entity.ToTable("user_sport_enrollments");
+            entity.HasKey(enrollment => enrollment.Id);
+            entity.Property(enrollment => enrollment.SectionName).HasMaxLength(200).IsRequired();
+            entity.Property(enrollment => enrollment.EnrolledAt).IsRequired();
+            entity.HasOne<Goga.Backend.Domain.Users.User>()
+                .WithMany()
+                .HasForeignKey(enrollment => enrollment.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasIndex(enrollment => enrollment.UserId).IsUnique();
+        });
 
         modelBuilder.Entity<Goga.Backend.Domain.News.News>(entity =>
         {

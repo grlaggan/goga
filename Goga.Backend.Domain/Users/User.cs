@@ -1,4 +1,5 @@
 using Goga.Backend.Domain.Courses;
+using Goga.Backend.Domain.Sports;
 
 namespace Goga.Backend.Domain.Users;
 
@@ -28,4 +29,5 @@ public sealed class User
     public string PasswordHash { get; private set; } = null!;
     public DateTime CreatedAt { get; private set; }
     public ICollection<UserCourse> Courses { get; private set; } = new List<UserCourse>();
+    public ICollection<UserSportEnrollment> SportEnrollments { get; private set; } = new List<UserSportEnrollment>();
 }

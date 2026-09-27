@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Goga — спортивные секции</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; font: 16px system-ui, sans-serif; color: #1d2433; background: #f4f5f7; }
+    header { display: flex; justify-content: space-between; align-items: center; padding: 18px max(24px, calc((100% - 960px) / 2)); background: #fff; border-bottom: 1px solid #e2e5ea; }
+    .brand { color: #1d2433; font-size: 20px; font-weight: 700; text-decoration: none; }
+    nav { display: flex; align-items: center; gap: 16px; }
+    a { color: #315bea; font-weight: 600; text-decoration: none; }
+    button { padding: 9px 14px; border: 0; border-radius: 8px; background: #315bea; color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+    button.secondary { background: #eef1f8; color: #315bea; }
+    main { width: min(100% - 32px, 960px); margin: 48px auto; padding: 40px; background: #fff; border: 1px solid #e2e5ea; border-radius: 14px; box-shadow: 0 12px 35px #17203312; }
+    h1 { margin: 0 0 8px; font-size: 28px; }
+    .subtitle { margin: 0 0 28px; color: #657084; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+    .card { padding: 20px; border: 1px solid #e2e5ea; border-radius: 10px; display: flex; flex-direction: column; gap: 10px; }
+    .card h3 { margin: 0; font-size: 17px; }
+    .card p { margin: 0; font-size: 14px; color: #657084; line-height: 1.5; flex: 1; }
+    .card .meta { font-size: 13px; color: #657084; }
+    .card button { width: 100%; }
+    .card button.enrolled { background: #24733d; cursor: default; }
+    .card button:disabled { opacity: .6; cursor: not-allowed; }
+    .empty { padding: 32px; text-align: center; color: #657084; }
+    .hidden { display: none; }
+    @media (max-width: 520px) { header { padding: 16px; } main { margin: 24px auto; padding: 24px; } }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="brand" href="/">Goga</a>
+    <nav>
+      <a href="/">Главная</a>
+      <a href="/timetable.html">Расписание</a>
+      <a href="/auth.html">Войти</a>
+      <button id="logout" class="secondary hidden" type="button">Выйти</button>
+    </nav>
+  </header>
+  <main>
+    <h1>Спортивные секции</h1>
+    <p class="subtitle" id="subtitle">Загрузка...</p>
+    <div class="grid" id="grid"></div>
+  </main>
+  <script>
+    const token = localStorage.getItem('accessToken');
+    const logout = document.querySelector('#logout');
+    const subtitle = document.querySelector('#subtitle');
+    const grid = document.querySelector('#grid');
+
+    if (!token) {
+      subtitle.textContent = 'Вы не авторизованы.';
+      grid.innerHTML = '<div class="empty">Войдите, чтобы записаться на секцию.</div>';
+    } else {
+      logout.classList.remove('hidden');
+    }
+
+    function renderSections(sections, enrollment) {
+      grid.innerHTML = sections.map(s => {
+        const isEnrolled = enrollment === s.name;
+        const isOther = enrollment !== null && !isEnrolled;
+        return `
+        <div class="card">
+          <h3>${s.name}</h3>
+          <p>${s.description}</p>
+          <div class="meta">${s.location} · ${s.schedule}</div>
+          <button data-name="${s.name}" type="button" ${isEnrolled ? 'class="enrolled" disabled' : isOther ? 'disabled' : ''}>
+            ${isEnrolled ? 'Вы записаны' : isOther ? 'Запись недоступна' : 'Записаться'}
+          </button>
+        </div>
+      `;
+      }).join('');
+
+      grid.querySelectorAll('button:not([disabled])').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          btn.disabled = true;
+          btn.textContent = 'Запись...';
+          try {
+            const response = await fetch(`/api/sports/enroll?sectionName=${encodeURIComponent(btn.dataset.name)}`, {
+              method: 'POST',
+              headers: { Authorization: `Bearer ${token}` }
+            });
+            if (!response.ok) throw new Error();
+            const data = await response.json();
+            subtitle.textContent = data.message;
+            loadSections();
+          } catch {
+            btn.disabled = false;
+            btn.textContent = 'Ошибка. Попробуйте снова';
+          }
+        });
+      });
+    }
+
+    async function loadSections() {
+      grid.innerHTML = '<div class="empty">Загрузка...</div>';
+      try {
+        const response = await fetch('/api/sports', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!response.ok) throw new Error();
+        const data = await response.json();
+        subtitle.textContent = data.enrollment
+          ? `Ваша запись: ${data.enrollment}`
+          : 'Выберите секцию и запишитесь на занятия.';
+        renderSections(data.sections, data.enrollment);
+      } catch {
+        subtitle.textContent = 'Ошибка загрузки.';
+        grid.innerHTML = '<div class="empty">Не удалось загрузить секции.</div>';
+      }
+    }
+
+    logout.addEventListener('click', () => {
+      localStorage.removeItem('accessToken');
+      window.location.reload();
+    });
+
+    if (token) loadSections();
+  </script>
+</body>
+</html>
