@@ -1,11 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "v6ly2EqM6Fk=",
+  "dgSpecHash": "9DtD0RLUFMc=",
   "success": true,
-  "projectFilePath": "C:\\dev\\Goga.Backend\\Goga.Backend.WebApi\\Goga.Backend.WebApi.csproj",
+  "projectFilePath": "C:\\Users\\Пользователь\\source\\repos\\goga\\Goga.Backend.WebApi\\Goga.Backend.WebApi.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\solod\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.12\\microsoft.aspnetcore.openapi.10.0.12.nupkg.sha512",
-    "C:\\Users\\solod\\.nuget\\packages\\microsoft.openapi\\2.12.0\\microsoft.openapi.2.12.0.nupkg.sha512"
+    "C:\\Users\\Пользователь\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.12\\microsoft.aspnetcore.openapi.10.0.12.nupkg.sha512",
+    "C:\\Users\\Пользователь\\.nuget\\packages\\microsoft.openapi\\2.12.0\\microsoft.openapi.2.12.0.nupkg.sha512"
   ],
   "logs": []
 }
