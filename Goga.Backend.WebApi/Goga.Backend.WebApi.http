@@ -1,0 +1,6 @@
+@Goga.Backend.WebApi_HostAddress = http://localhost:5174
+
+GET {{Goga.Backend.WebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
