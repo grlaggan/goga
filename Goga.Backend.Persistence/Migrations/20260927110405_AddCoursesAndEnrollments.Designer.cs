@@ -4,6 +4,7 @@ using Goga.Backend.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Goga.Backend.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260927110405_AddCoursesAndEnrollments")]
+    partial class AddCoursesAndEnrollments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,21 +45,6 @@ namespace Goga.Backend.Persistence.Migrations
                         {
                             Id = new Guid("10000000-0000-0000-0000-000000000001"),
                             Name = "Основы backend-разработки"
-                        },
-                        new
-                        {
-                            Id = new Guid("10000000-0000-0000-0000-000000000002"),
-                            Name = "Информатика"
-                        },
-                        new
-                        {
-                            Id = new Guid("10000000-0000-0000-0000-000000000003"),
-                            Name = "Основы программирования"
-                        },
-                        new
-                        {
-                            Id = new Guid("10000000-0000-0000-0000-000000000004"),
-                            Name = "Алгоритмы и структуры данных"
                         });
                 });
 
@@ -99,48 +87,6 @@ namespace Goga.Backend.Persistence.Migrations
                             CourseId = new Guid("10000000-0000-0000-0000-000000000001"),
                             Name = "Архитектура приложения",
                             PdfPath = "/pdf/courses/backend/architecture.pdf"
-                        },
-                        new
-                        {
-                            Id = new Guid("20000000-0000-0000-0000-000000000003"),
-                            CourseId = new Guid("10000000-0000-0000-0000-000000000002"),
-                            Name = "Информация и данные",
-                            PdfPath = "/pdf/courses/informatics/data.pdf"
-                        },
-                        new
-                        {
-                            Id = new Guid("20000000-0000-0000-0000-000000000004"),
-                            CourseId = new Guid("10000000-0000-0000-0000-000000000002"),
-                            Name = "Компьютерные системы",
-                            PdfPath = "/pdf/courses/informatics/systems.pdf"
-                        },
-                        new
-                        {
-                            Id = new Guid("20000000-0000-0000-0000-000000000005"),
-                            CourseId = new Guid("10000000-0000-0000-0000-000000000003"),
-                            Name = "Переменные и типы данных",
-                            PdfPath = "/pdf/courses/programming/types.pdf"
-                        },
-                        new
-                        {
-                            Id = new Guid("20000000-0000-0000-0000-000000000006"),
-                            CourseId = new Guid("10000000-0000-0000-0000-000000000003"),
-                            Name = "Функции и классы",
-                            PdfPath = "/pdf/courses/programming/functions.pdf"
-                        },
-                        new
-                        {
-                            Id = new Guid("20000000-0000-0000-0000-000000000007"),
-                            CourseId = new Guid("10000000-0000-0000-0000-000000000004"),
-                            Name = "Сложность алгоритмов",
-                            PdfPath = "/pdf/courses/algorithms/complexity.pdf"
-                        },
-                        new
-                        {
-                            Id = new Guid("20000000-0000-0000-0000-000000000008"),
-                            CourseId = new Guid("10000000-0000-0000-0000-000000000004"),
-                            Name = "Графы и деревья",
-                            PdfPath = "/pdf/courses/algorithms/graphs.pdf"
                         });
                 });
 
