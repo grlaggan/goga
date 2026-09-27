@@ -8,7 +8,7 @@ namespace Goga.Backend.WebApi.Controllers;
 [ApiController]
 [Route("api/protected")]
 [Authorize]
-public sealed class ProtectedController(ISender sender) : ControllerBase
+public sealed class ProtectedController(ISender sender) : Controller
 {
     [HttpGet]
     public async Task<IActionResult> Get(CancellationToken cancellationToken)

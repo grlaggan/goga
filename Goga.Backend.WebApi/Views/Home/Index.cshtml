@@ -1,0 +1,1 @@
+@{ ViewData["Title"] = "Главная"; }<main><section class="panel"><h1>Добро пожаловать</h1><p>Полноценное Razor MVC-приложение с авторизацией, курсами и расписанием.</p>@if(User.Identity?.IsAuthenticated == true){<p class="success">Вы вошли как @User.Identity.Name.</p>}else{<a class="button" asp-controller="Auth" asp-action="Login">Войти в приложение</a>}</section></main>

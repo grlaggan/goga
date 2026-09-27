@@ -5,6 +5,7 @@ using MySqlConnector;
 using Goga.Backend.Application.Interfaces;
 using Goga.Backend.Persistence.Users;
 using Goga.Backend.Persistence.Courses;
+using Goga.Backend.Persistence.Timetables;
 
 namespace Goga.Backend.Persistence;
 
@@ -35,6 +36,7 @@ public static class DependencyInjection
             options.UseMySql(connectionStringBuilder.ConnectionString, serverVersion));
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<ICourseRepository, CourseRepository>();
+        services.AddScoped<ITimetableRepository, TimetableRepository>();
 
         return services;
     }

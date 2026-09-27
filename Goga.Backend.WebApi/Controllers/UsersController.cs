@@ -7,7 +7,7 @@ namespace Goga.Backend.WebApi.Controllers;
 
 [ApiController]
 [Route("api/users")]
-public sealed class UsersController(ISender sender) : ControllerBase
+public sealed class UsersController(ISender sender) : Controller
 {
     [HttpGet("me")]
     [Authorize]

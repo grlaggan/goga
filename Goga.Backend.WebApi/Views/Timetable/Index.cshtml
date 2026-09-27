@@ -1,0 +1,14 @@
+@{ ViewData["Title"] = "Расписание"; }
+<main>
+  <section class="panel">
+    <h1>Расписание</h1>
+    <p>Группа: @User.FindFirst("group")?.Value</p>
+    <div class="grid" style="margin-top:22px">
+      <article class="course"><h2>Понедельник</h2><p><b>08:30</b> — Информатика</p><small>Корпус 2, ауд. 205 — Петров П.П.</small><p><b>10:15</b> — Программирование</p><small>Корпус 3, ауд. 310 — Сидоров С.С.</small></article>
+      <article class="course"><h2>Вторник</h2><p><b>10:15</b> — Математический анализ</p><small>Корпус 1, ауд. 101 — Иванов И.И.</small><p><b>12:00</b> — Базы данных</p><small>Корпус 1, ауд. 112 — Козлов К.К.</small></article>
+      <article class="course"><h2>Среда</h2><p><b>08:30</b> — Алгоритмы</p><small>Корпус 3, ауд. 305 — Смирнов А.А.</small><p><b>14:00</b> — Архитектура ПО</p><small>Корпус 1, ауд. 204 — Иванов И.И.</small></article>
+      <article class="course"><h2>Четверг</h2><p><b>10:15</b> — Дискретная математика</p><small>Корпус 2, ауд. 205 — Петров П.П.</small><p><b>12:00</b> — Проектная работа</p><small>Корпус 3, ауд. 310 — Сидоров С.С.</small></article>
+      <article class="course"><h2>Пятница</h2><p><b>08:30</b> — Основы backend-разработки</p><small>Асинхронно, материалы курса</small><p><b>15:45</b> — Практика</p><small>Корпус 1, ауд. 101 — Козлов К.К.</small></article>
+    </div>
+  </section>
+</main>
