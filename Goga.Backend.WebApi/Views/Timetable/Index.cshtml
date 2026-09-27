@@ -1,14 +1,117 @@
-@{ ViewData["Title"] = "Расписание"; }
-<main>
-  <section class="panel">
-    <h1>Расписание</h1>
-    <p>Группа: @User.FindFirst("group")?.Value</p>
-    <div class="grid" style="margin-top:22px">
-      <article class="course"><h2>Понедельник</h2><p><b>08:30</b> — Информатика</p><small>Корпус 2, ауд. 205 — Петров П.П.</small><p><b>10:15</b> — Программирование</p><small>Корпус 3, ауд. 310 — Сидоров С.С.</small></article>
-      <article class="course"><h2>Вторник</h2><p><b>10:15</b> — Математический анализ</p><small>Корпус 1, ауд. 101 — Иванов И.И.</small><p><b>12:00</b> — Базы данных</p><small>Корпус 1, ауд. 112 — Козлов К.К.</small></article>
-      <article class="course"><h2>Среда</h2><p><b>08:30</b> — Алгоритмы</p><small>Корпус 3, ауд. 305 — Смирнов А.А.</small><p><b>14:00</b> — Архитектура ПО</p><small>Корпус 1, ауд. 204 — Иванов И.И.</small></article>
-      <article class="course"><h2>Четверг</h2><p><b>10:15</b> — Дискретная математика</p><small>Корпус 2, ауд. 205 — Петров П.П.</small><p><b>12:00</b> — Проектная работа</p><small>Корпус 3, ауд. 310 — Сидоров С.С.</small></article>
-      <article class="course"><h2>Пятница</h2><p><b>08:30</b> — Основы backend-разработки</p><small>Асинхронно, материалы курса</small><p><b>15:45</b> — Практика</p><small>Корпус 1, ауд. 101 — Козлов К.К.</small></article>
+@model TimetablePageViewModel
+@using Goga.Backend.Domain.Timetables
+@{
+    ViewData["Title"] = "Расписание";
+    var today = DateTime.Today;
+    var tomorrow = today.AddDays(1);
+    var dayNames = new Dictionary<DayOfWeek, string>
+    {
+        [DayOfWeek.Monday] = "Понедельник",
+        [DayOfWeek.Tuesday] = "Вторник",
+        [DayOfWeek.Wednesday] = "Среда",
+        [DayOfWeek.Thursday] = "Четверг",
+        [DayOfWeek.Friday] = "Пятница",
+        [DayOfWeek.Saturday] = "Суббота",
+        [DayOfWeek.Sunday] = "Воскресенье"
+    };
+}
+
+<main class="timetable-page">
+    <section class="timetable-intro">
+        <div>
+            <span class="eyebrow">Учебный календарь</span>
+            <h1>Расписание</h1>
+            <p>Занятия на сегодня и завтра.</p>
+        </div>
+        <div class="calendar-mark" aria-hidden="true">▦</div>
+    </section>
+
+    <div class="schedule-grid">
+            @foreach (var item in new[]
+            {
+                (Label: "Сегодня", Date: today, Data: Model.Today),
+                (Label: "Завтра", Date: tomorrow, Data: Model.Tomorrow)
+            })
+            {
+                <section class="day-card">
+                    <header class="day-header">
+                        <div>
+                            <span class="day-label">@item.Label</span>
+                            <h2>@dayNames[item.Date.DayOfWeek]</h2>
+                        </div>
+                        <time datetime="@item.Date.ToString("yyyy-MM-dd")">@item.Date.ToString("dd.MM")</time>
+                    </header>
+
+                    @if (item.Data is null || item.Data.Lessons.Count == 0)
+                    {
+                        <div class="empty-day">
+                            <span aria-hidden="true">☼</span>
+                            <strong>Занятий нет</strong>
+                            <small>Можно посвятить день самостоятельной работе</small>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="day-meta">
+                            <span>@(item.Data.Lessons.Count) @(item.Data.Lessons.Count == 1 ? "занятие" : "занятия")</span>
+                            <span>@(item.Data.WeekParity == WeekParity.Even ? "Чётная неделя" : "Нечётная неделя")</span>
+                        </div>
+                        <div class="lesson-list">
+                            @foreach (var lesson in item.Data.Lessons)
+                            {
+                                var isOnline = lesson.Format == LessonFormat.Asynchronous;
+                                <article class="lesson-card">
+                                    <div class="lesson-number">@lesson.Number</div>
+                                    <div class="lesson-time">@LessonSchedule.GetStartTime(lesson.Number).ToString(@"hh\:mm")</div>
+                                    <div class="lesson-main">
+                                        <h3>@lesson.Subject</h3>
+                                        <p class="lesson-location">@(isOnline ? "Онлайн-занятие" : $"{lesson.Building} · {lesson.Auditorium}")</p>
+                                        <small>@lesson.Lecturer</small>
+                                    </div>
+                                    <span class="lesson-type">@(lesson.Type == LessonType.Lecture ? "Лекция" : "Практика")</span>
+                                </article>
+                            }
+                        </div>
+                    }
+                </section>
+            }
     </div>
-  </section>
 </main>
+
+<style>
+    .timetable-intro{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
+    .eyebrow,.day-label{color:#315bea;text-transform:uppercase;letter-spacing:.09em;font-size:12px;font-weight:800}
+    .timetable-intro h1{margin:5px 0}
+    .timetable-intro p{margin:0}
+    .calendar-mark{display:grid;place-items:center;width:58px;height:58px;border-radius:16px;background:#e9efff;color:#315bea;font-size:30px}
+    .schedule-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+    .day-card{padding:24px;background:#fff;border:1px solid #e2e6ee;border-radius:16px;box-shadow:0 12px 30px #1720330c}
+    .day-header{display:flex;justify-content:space-between;align-items:flex-start;padding:0 0 18px;background:transparent;border:0}
+    .day-header h2{margin:5px 0 0;font-size:23px}
+    .day-header time{padding:7px 10px;border-radius:8px;background:#f1f4fa;color:#667085;font-weight:700}
+    .day-meta{display:flex;justify-content:space-between;gap:12px;margin-bottom:12px;color:#667085;font-size:12px}
+    .lesson-list{display:grid;gap:11px}
+    .lesson-card{display:grid;grid-template-columns:26px 48px minmax(0,1fr) auto;gap:10px;align-items:start;padding:14px;border:1px solid #edf0f5;border-radius:12px;transition:.15s}
+    .lesson-card:hover{border-color:#b9c7f5;box-shadow:0 5px 14px #315bea12}
+    .lesson-number{display:grid;place-items:center;width:26px;height:26px;border-radius:8px;background:#eef1f8;color:#315bea;font-size:12px;font-weight:800}
+    .lesson-time{padding-top:4px;color:#315bea;font-weight:800}
+    .lesson-main h3{margin:0 0 4px;font-size:15px}
+    .lesson-main p,.lesson-main small{display:block;margin:0;color:#667085;font-size:12px}
+    .lesson-main small{margin-top:3px}
+    .lesson-type{align-self:start;padding:4px 7px;border-radius:6px;background:#eef1f8;color:#315bea;font-size:10px;font-weight:800;white-space:nowrap}
+    .empty-day{display:grid;place-items:center;padding:38px 10px;text-align:center;color:#667085}
+    .empty-day span{font-size:28px;color:#b8c1d1}
+    .empty-day strong{margin-top:10px;color:#344054}
+    .empty-day small{margin-top:2px;font-size:12px}
+    .timetable-notice{display:flex;align-items:flex-start;gap:14px}
+    .timetable-notice h2{margin:0 0 6px;font-size:20px}
+    .timetable-notice p{margin:0}
+    .notice-icon{display:grid;place-items:center;flex:none;width:28px;height:28px;border-radius:50%;background:#e9efff;color:#315bea;font-weight:800}
+    @@media (max-width:760px){
+        .schedule-grid{grid-template-columns:1fr}
+        .timetable-intro{align-items:flex-start}
+        .calendar-mark{width:46px;height:46px;font-size:23px}
+        .lesson-card{grid-template-columns:26px 48px minmax(0,1fr)}
+        .lesson-type{grid-column:3;justify-self:start;margin-top:3px}
+    }
+</style>

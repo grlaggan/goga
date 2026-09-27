@@ -1,1 +1,25 @@
-@{ ViewData["Title"] = "Главная"; }<main><section class="panel"><h1>Добро пожаловать</h1><p>Полноценное Razor MVC-приложение с авторизацией, курсами и расписанием.</p>@if(User.Identity?.IsAuthenticated == true){<p class="success">Вы вошли как @User.Identity.Name.</p>}else{<a class="button" asp-controller="Auth" asp-action="Login">Войти в приложение</a>}</section></main>
+@model IReadOnlyList<Goga.Backend.Application.News.Queries.NewsResult>
+@{ ViewData["Title"] = "Главная"; }
+<main>
+  <section class="panel">
+    <h1>Добро пожаловать</h1>
+    <p>Новости и последние обновления приложения.</p>
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+      <p class="success">Вы вошли как @User.Identity.Name.</p>
+    }
+    else
+    {
+      <p><a asp-controller="Auth" asp-action="Login">Войти в приложение</a></p>
+    }
+  </section>
+  <section class="grid" style="margin-top:20px">
+    @foreach (var news in Model)
+    {
+      <article class="course">
+        <h2>@news.Title</h2>
+        <p>@news.Description</p>
+      </article>
+    }
+  </section>
+</main>
