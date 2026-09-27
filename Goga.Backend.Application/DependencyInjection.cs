@@ -3,6 +3,7 @@ using System.Reflection;
 using MediatR;
 using Goga.Backend.Application.Authentication;
 using Goga.Backend.Application.Interfaces;
+using Goga.Backend.Application.Timetables;
 
 namespace Goga.Backend.Application;
 
@@ -13,6 +14,7 @@ public static class DependencyInjection
         services.AddMediatR(configuration =>
             configuration.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
         services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<ITimetableService, TimetableService>();
 
         return services;
     }
