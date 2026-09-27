@@ -1,0 +1,43 @@
+@model IReadOnlyList<Goga.Backend.Domain.Sports.SportSection>
+@{ ViewData["Title"] = "Спортивные секции"; }
+<main>
+  <h1>Спортивные секции</h1>
+  <p>Выберите одну секцию для записи. Запись доступна только на одну секцию.</p>
+  @if (TempData["Success"] is not null)
+  {
+    <div class="notice success">@TempData["Success"]</div>
+  }
+  @if (TempData["Error"] is not null)
+  {
+    <div class="notice error">@TempData["Error"]</div>
+  }
+  @if (ViewData["ExistingEnrollment"] is not null)
+  {
+    <div class="notice">Вы записаны на секцию: <strong>@ViewData["ExistingEnrollment"]</strong></div>
+  }
+  <section class="grid" style="margin-top:20px">
+    @foreach (var sportSection in Model)
+    {
+      <article class="course">
+        <h2>@sportSection.Name</h2>
+        <p>@sportSection.Description</p>
+        <p><strong>Место:</strong> @sportSection.Location</p>
+        @if (ViewData["ExistingEnrollment"] is null)
+        {
+          <form asp-action="Enroll" asp-route-sectionName="@sportSection.Name" method="post">
+            @Html.AntiForgeryToken()
+            <button type="submit">Записаться</button>
+          </form>
+        }
+        else if (ViewData["ExistingEnrollment"]?.ToString() == sportSection.Name)
+        {
+          <p class="success">✓ Вы записаны на эту секцию</p>
+        }
+        else
+        {
+          <button disabled>Записаться</button>
+        }
+      </article>
+    }
+  </section>
+</main>
