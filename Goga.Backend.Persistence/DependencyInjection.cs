@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MySqlConnector;
 using Goga.Backend.Application.Interfaces;
 using Goga.Backend.Persistence.Users;
+using Goga.Backend.Persistence.Courses;
 
 namespace Goga.Backend.Persistence;
 
@@ -33,6 +34,7 @@ public static class DependencyInjection
         services.AddDbContext<AppDbContext>(options =>
             options.UseMySql(connectionStringBuilder.ConnectionString, serverVersion));
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<ICourseRepository, CourseRepository>();
 
         return services;
     }
